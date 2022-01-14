@@ -41,8 +41,8 @@ public class ISBNConverter {
 	public static boolean ValidISBN13(String isbn){
 
 		// create an array that is the length of the scan
-		int[] userScan = new int[isbn.length()];
-		if (userScan.length != 13)
+		int x = isbn.length();
+		if (x != 13)
 			return false;
 
 		int sum = 0;
@@ -50,28 +50,43 @@ public class ISBNConverter {
 		int j = 1;
 		int k = 3;
 
-		// loop through scan to capture each digit as it's own position in array userScan
-		for (int i = 0; i < userScan.length; i++) {
+		//calculate weighted sum of first 12 digits
+		for (int i = 0; i < 12; i++){
 
-			// capture each digit in userInput
-			int loc = userScan[i];
+			int ch = isbn.charAt(i) - '0';
+			if (ch < 0 || ch > 9)
+				return false;
 
-			//IMPORTANT. Makes sure that loop knows to only look for values between 0-10. Still need to figure out how to calculate x as last digit
-			if (loc < '0' || loc > '9')
-			{
-				throw new IllegalArgumentException("Invalid input");
+			//add value from rhs to lhs
+			//multiply first number by 1, second by 3, third by 1, and so on
+			if (i % 2 ==0) {
+				sum += (ch * (j));
 			}
-
-			//check last digit for x
-			char lastdigit = userScan.[i];
-
-			if (lastdigit == 'X') {
-				sum += 10;
-			} else
-				sum += (isbn.charAt(9) - 4);
+			else {
+				sum += (ch *(k));
+			}
 		}
 
-		return (sum % 11 == 0);
+
+		//check last digit for x
+		char lastdigit = isbn.charAt(12);
+
+		if (lastdigit == 'X') {
+			lastdigit = 10;
+			sum+= lastdigit;
+		} else
+		{
+			sum += (isbn.charAt(12));
+		}
+
+		//check for valid checkdigit
+
+		int remainder = (sum % 10);
+
+		if (remainder != 0)
+			sum += (10 - remainder);
+
+		return (sum % 10 == 0);
 	}
 
 	public static void main (String[] args){
@@ -82,9 +97,13 @@ public class ISBNConverter {
 
 		String isbn = in.next();
 
-		if (ValidISBN10(isbn))
+		if (ValidISBN10(isbn)) {
 			System.out.print("Valid 10-digit ISBN");
-		else
-			System.out.print("Invalid 10-digit ISBN");
+		}
+		else if (ValidISBN13(isbn)){
+			System.out.print("Valid 13-Digit ISBN");
+		}else
+		System.out.print("Invalid ISBN");
+
 	}
 }
