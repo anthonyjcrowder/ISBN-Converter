@@ -4,18 +4,23 @@ public class ISBNConverter {
 
 	public static boolean ValidISBN10(String isbn){
 
-		int x = isbn.length();
-		if (x != 10)
+
+		//adjusting this to take an isbn 13 and output as isbn 10
+		int scan = isbn.length();
+		if (scan != 13)
 			return false;
 
 		int sum = 0;
 
 		int j = 10;
 
+		//get rid of 978 of isbn
+		String convert = isbn.substring(3);
+
 		//calculate weighted sum of first nine digits
 		for (int i = 0; i < 9; i++){
 
-			int ch = isbn.charAt(i) - '0';
+			int ch = convert.charAt(i) - '0';
 			if (ch < 0 || ch > 9)
 				return false;
 
@@ -24,8 +29,10 @@ public class ISBNConverter {
 
 			j--;
 
+			System.out.print(convert.charAt(i));
 		}
 
+		System.out.println("");
 
 		//check last digit for x
 		char lastdigit = isbn.charAt(9);
@@ -67,7 +74,6 @@ public class ISBNConverter {
 			}
 		}
 
-
 		//check last digit for x
 		char lastdigit = isbn.charAt(12);
 
@@ -89,6 +95,51 @@ public class ISBNConverter {
 		return (sum % 10 == 0);
 	}
 
+	/*
+	public static boolean ISBN13to10(String isbn){
+
+		// figure out a way to drop the 978 and perform a check digit for a 10 digit isbn
+		int x = isbn.length();
+		if (x != 13)
+			return false;
+
+		int sum = 0;
+
+		int j = 10;
+
+		//calculate weighted sum of first nine digits
+		for (int i = 0; i > 2 && i < 9 ; i++){
+
+			int ch = isbn.charAt(i) - '0';
+			if (ch < 0 || ch > 9)
+				return false;
+
+			//add value from rhs to lhs
+			sum += (ch * (j));
+
+			j--;
+
+			System.out.print(isbn.charAt(i));
+		}
+
+		//check last digit for x
+		char lastdigit = isbn.charAt(9);
+
+		if (lastdigit == 'X') {
+			sum += 10;
+		} else
+			sum += (isbn.charAt(9) - 4);
+
+		return (sum % 11 == 0);
+	}
+
+	//public static boolean ISBN10to13(String isbn) {
+
+	//	if (ValidISBN10(isbn)){
+
+		//} return true;
+//	}
+*/
 	public static void main (String[] args){
 
 		Scanner in = new Scanner(System.in);
@@ -97,13 +148,15 @@ public class ISBNConverter {
 
 		String isbn = in.next();
 
-		if (ValidISBN10(isbn)) {
-			System.out.print("Valid 10-digit ISBN");
-		}
-		else if (ValidISBN13(isbn)){
-			System.out.print("Valid 13-Digit ISBN");
-		}else
-		System.out.print("Invalid ISBN");
 
+		if (ValidISBN13(isbn)) {
+			System.out.print("ISBN 10: " + ValidISBN10(isbn));
+		}
+
+		//else if (ValidISBN10(isbn)){
+		//	System.out.print("ISBN 13: ");
+		//}else
+
+		//System.out.print("Invalid ISBN");
 	}
 }
